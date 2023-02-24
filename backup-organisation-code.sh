@@ -51,7 +51,7 @@ for output_repo_list in $repository_name_list
         output_json="$(aws codecommit get-repository --repository-name "$BACKUP_GITHUB_OWNER"-"$output_repo_list")"
         clone_url="$(echo "$output_json" | python3 -c "import sys, json; print(json.load(sys.stdin)['repositoryMetadata']['cloneUrlHttp'])")"
 	echo $clone_url
-        clone_repository_name="$(echo "$output_json" | python3 -c "import sys, json; print(json.load(sys.stdin)['repositoryMetadata']['repositoryDescription'])")"
+        clone_repository_name="$(echo "$output_json" | python3 -c "import sys, json; print(json.load(sys.stdin)['repositoryMetadata']['repositoryDescription'])").git"
         echo $clone_repository_name
         cd $clone_repository_name
         git remote add sync $clone_url
