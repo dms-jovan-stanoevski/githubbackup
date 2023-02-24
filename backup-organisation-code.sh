@@ -54,7 +54,10 @@ for output_repo_list in $repository_name_list
         clone_repository_name="$(echo "$output_json" | python3 -c "import sys, json; print(json.load(sys.stdin)['repositoryMetadata']['repositoryDescription'])")"
         echo $clone_repository_name
         cd $clone_repository_name
-	    git remote add sync $clone_url
+        git remote add sync $clone_url
+        git config --unset core.bare
+        git reset --hard
         git push sync --mirror
-	cd ..
+        cd ..
 done
+#Complete
