@@ -86,3 +86,5 @@ git push github --all
 
 Each time you made PR towards AWS CodeCommit Repo and want to sync that change back to GitHub Repo repeat last two stated commands , and all changes that were committed towards 
 AWS CodeCommit Backup Repo will reflect and transfer the same exact code/file change towards same GitHub repo.
+
+Simulation Test 01
