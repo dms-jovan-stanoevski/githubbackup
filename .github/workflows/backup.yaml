@@ -24,7 +24,7 @@ permissions:
 jobs:
   Backup:
     runs-on: ubuntu-latest
-    name: Backup
+    name: Backup GitHub Org/Repos to AWS S3 with Automatic creation of AWS CodeCommit Repos
 
     steps:
       - name: Assume role
@@ -58,7 +58,7 @@ jobs:
 
           echo $?
 
-          echo "Complete."
+          echo "#####Complete backup of GitHub Org/Repos into S3 bucket maksystem-internal-github-backup under AWS MAK-SYSTEM VCS Backup account####"
 
           #aws s3 cp s3://$BACKUP_BUCKET_NAME/github.com/$BACKUP_GITHUB_OWNER/`date "+%Y-%m-%d"`/ . --recursive
 
@@ -84,7 +84,7 @@ jobs:
             fi;
             output_json="$(aws codecommit get-repository --repository-name "$BACKUP_GITHUB_OWNER"-"$output_repo_list")"
             clone_url="$(echo "$output_json" | python3 -c "import sys, json; print(json.load(sys.stdin)['repositoryMetadata']['cloneUrlHttp'])")"
-	          echo $clone_url
+            echo $clone_url
             clone_repository_name="$(echo "$output_json" | python3 -c "import sys, json; print(json.load(sys.stdin)['repositoryMetadata']['repositoryDescription'])").git"
             echo $clone_repository_name
             cd $clone_repository_name
