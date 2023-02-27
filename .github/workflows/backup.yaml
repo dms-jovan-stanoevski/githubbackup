@@ -60,8 +60,6 @@ jobs:
 
           echo "#####Complete backup of GitHub Org/Repos into S3 bucket maksystem-internal-github-backup under AWS MAK-SYSTEM VCS Backup account####"
 
-          #aws s3 cp s3://$BACKUP_BUCKET_NAME/github.com/$BACKUP_GITHUB_OWNER/`date "+%Y-%m-%d"`/ . --recursive
-
           repository_name_list="$(gh repo list $BACKUP_GITHUB_OWNER --json "name" --limit 1000 --template '{{range .}}{{ .name }}{{"\n"}}{{end}}')"
           echo $repository_name_list
           for output_repo_list in $repository_name_list
