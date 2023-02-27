@@ -1,4 +1,4 @@
-name: Backup
+name: Backup GitHub to AWS S3 with Automatic creation of AWS CodeCommit Repos
 
 on:
   workflow_dispatch:
@@ -20,7 +20,7 @@ jobs:
   Backup:
     runs-on: ubuntu-latest
     container: ghcr.io/dms-jovan-stanoevski/githubbackup:main
-    name: Backup
+    name: Backup GitHub Org/Repos to AWS S3 with Automatic creation of AWS CodeCommit Repos
 
     steps:
       - name: Assume role
@@ -32,7 +32,7 @@ jobs:
       - name: Display assumed role
         run: aws sts get-caller-identity
 
-      - name: Backup
+      - name: Backup GitHub Org/Repos to AWS S3 with Automatic creation of AWS CodeCommit Repos
         shell: bash {0}
         env:
           BACKUP_GITHUB_PAT: ${{ secrets.BACKUP_GITHUB_PAT }}
