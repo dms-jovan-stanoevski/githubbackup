@@ -68,3 +68,21 @@ docker run -it --rm --entrypoint "/bin/bash" githubbackup:latest
 ```sh
 docker run -e BACKUP_GITHUB_PAT -e BACKUP_AWS_ROLE -e BACKUP_AWS_REGION -e BACKUP_BUCKET_NAME githubbackup:latest backup-organisation-code
 ```
+## AWS CodeCommit Instructions:
+
+clone your AWSCodeCommit repository with the mirror flag, 
+
+git clone --mirror codecommit::{region}://{repo} {repo}
+
+then we are going into the folder and add our GitHub remote path with the token and mirror tag with fetch at the end of it we are fetching from the origin (CodeCommit) and push 
+to GitHub repository after it.
+
+cd /into-clonned-aws-codecommit-repo-local-folder
+git remote add --mirror=fetch github https://<token>@github.com/{username}/{repo}
+
+And afterwards execute 
+git fetch origin
+git push github --all
+
+Each time you made PR towards AWS CodeCommit Repo and want to sync that change back to GitHub Repo repeat last two stated commands , and all changes that were committed towards 
+AWS CodeCommit Backup Repo will reflect and transfer the same exact code/file change towards same GitHub repo.
