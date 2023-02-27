@@ -1,71 +1,77 @@
-name: Backup GitHub Org/Repos to AWS S3 with Automatic creation of AWS CodeCommit Repos
+---
+name: Backup GitHub Org/Repos to AWS S3 with Automatic creation of AWS
+  CodeCommit Repos
 env:
   BACKUP_GITHUB_PAT: ${{ secrets.BACKUP_GITHUB_PAT }}
   BACKUP_GITHUB_OWNER: ${{ secrets.BACKUP_GITHUB_OWNER }}
   BACKUP_AWS_REGION: ${{ secrets.BACKUP_AWS_REGION }}
   BACKUP_BUCKET_NAME: ${{ secrets.BACKUP_BUCKET_NAME }}
-
 on:
-  workflow_dispatch:
+  workflow_dispatch: null
   schedule:
-    - cron: '0 0 * * *'
-
+    - cron: 0 0 * * *
 permissions:
   id-token: write
   contents: read
-
-      # Needs secrets:
-      # BACKUP_GITHUB_PAT
-      # BACKUP_GITHUB_OWNER
-      # BACKUP_AWS_ROLE
-      # BACKUP_AWS_REGION
-      # BACKUP_BUCKET_NAME
-
 jobs:
   Backup:
     runs-on: ubuntu-latest
     name: Backup
-
     steps:
       - name: Assume role
         uses: aws-actions/configure-aws-credentials@v1
         with:
           role-to-assume: ${{ secrets.BACKUP_AWS_ROLE }}
           aws-region: ${{ secrets.BACKUP_AWS_REGION }}
-
       - name: Display assumed role
         run: aws sts get-caller-identity
-
-      - name: Backup
-        shell: bash {0}
-        run: |          
+      - name: Backup GitHub Org/Repos to AWS S3 with Automatic creation of AWS
+          CodeCommit Repos
+        run: >
           echo "Logging in with personal access token."
+
           export GH_TOKEN=$BACKUP_GITHUB_PAT
+
           gh auth setup-git
-          
+
+
           echo "Downloading repositories for" $BACKUP_GITHUB_OWNER
+
 
           gh repo list $BACKUP_GITHUB_OWNER --json "name" --limit 1000 --template '{{range .}}{{ .name }}{{"\n"}}{{end}}' | xargs -L1 -I {} git clone --mirror https://${BACKUP_GITHUB_OWNER}:{BACKUP_GITHUB_PAT}@github.com/$BACKUP_GITHUB_OWNER/{} 
 
+
           for f in */; do mkdir -p $f/.git; done
+
 
           for d in *; do echo "$d"; cp -avr $d/* $d/.git; done
 
+
           echo "Downloaded repositories..."
+
           find  . -maxdepth 1 -type d
 
+
           echo "Uploading to S3 bucket" $BACKUP_BUCKET_NAME "in region" $BACKUP_AWS_REGION
+
           aws s3 sync --region=$BACKUP_AWS_REGION . s3://$BACKUP_BUCKET_NAME/github.com/$BACKUP_GITHUB_OWNER/`date "+%Y-%m-%d"`/
+
 
           echo $?
 
+
           echo "Complete."
+
 
           #aws s3 cp s3://$BACKUP_BUCKET_NAME/github.com/$BACKUP_GITHUB_OWNER/`date "+%Y-%m-%d"`/ . --recursive
 
+
           repository_name_list="$(gh repo list $BACKUP_GITHUB_OWNER --json "name" --limit 1000 --template '{{range .}}{{ .name }}{{"\n"}}{{end}}')"
+
           echo $repository_name_list
+
           for output_repo_list in $repository_name_list
+
           do
             git config --global --add safe.directory /github/workspace
             git config --global credential.'https://git-codecommit.*.amazonaws.com'.helper '!aws codecommit credential-helper $@'
@@ -85,7 +91,6 @@ jobs:
             fi;
             output_json="$(aws codecommit get-repository --repository-name "$BACKUP_GITHUB_OWNER"-"$output_repo_list")"
             clone_url="$(echo "$output_json" | python3 -c "import sys, json; print(json.load(sys.stdin)['repositoryMetadata']['cloneUrlHttp'])")"
-	          echo $clone_url
             clone_repository_name="$(echo "$output_json" | python3 -c "import sys, json; print(json.load(sys.stdin)['repositoryMetadata']['repositoryDescription'])").git"
             echo $clone_repository_name
             cd $clone_repository_name
