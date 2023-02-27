@@ -37,7 +37,7 @@ jobs:
         run: aws sts get-caller-identity
 
       - name: Backup GitHub Org/Repos to AWS S3 with Automatic creation of AWS CodeCommit Repos
-        run: |          
+        run: |         
           echo "Logging in with personal access token."
           export GH_TOKEN=$BACKUP_GITHUB_PAT
           gh auth setup-git
@@ -91,5 +91,5 @@ jobs:
             git reset --hard
             git push sync --mirror
             cd ..
-            done
+          done
           #Complete
