@@ -46,6 +46,7 @@ jobs:
 
           gh repo list $BACKUP_GITHUB_OWNER --json "name" --limit 1000 --template '{{range .}}{{ .name }}{{"\n"}}{{end}}' | xargs -I {} git clone --mirror https://${BACKUP_GITHUB_OWNER}:{BACKUP_GITHUB_PAT}@github.com/$BACKUP_GITHUB_OWNER/{} 
 
+          echo $?
           #for f in */; do mkdir -p $f/.git; done
 
           #for d in *; do echo "$d"; cp -avr $d/* $d/.git; done
