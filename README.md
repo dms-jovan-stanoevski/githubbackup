@@ -78,9 +78,11 @@ then we are going into the folder and add our GitHub remote path with the token 
 to GitHub repository after it.
 
 cd /into-clonned-aws-codecommit-repo-local-folder
+
 git remote add --mirror=fetch github https://<token>@github.com/{username}/{repo}
 
 And afterwards execute 
+
 git fetch origin
 git push github --all
 
